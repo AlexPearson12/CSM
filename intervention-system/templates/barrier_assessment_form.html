@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barrier Assessment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .form-section {
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+        
+        .form-section:last-child {
+            border-bottom: none;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        select, input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .barrier-question {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+        }
+        
+        .question-text {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        
+        .question-examples {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+        
+        .question-scale {
+            font-size: 12px;
+            color: #95a5a6;
+            margin-bottom: 15px;
+            padding: 8px;
+            background: white;
+            border-radius: 4px;
+        }
+        
+        .slider-container {
+            margin-top: 15px;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: linear-gradient(to right, #27ae60 0%, #f39c12 50%, #e74c3c 100%);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .score-display {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-top: 10px;
+            min-height: 40px;
+        }
+        
+        .score-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            text-align: center;
+            margin-top: 5px;
+        }
+        
+        .btn-submit {
+            background: #27ae60;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        
+        .btn-submit:hover {
+            background: #229954;
+        }
+        
+        .help-text {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .barrier-type-header {
+            background: #34495e;
+            color: white;
+            padding: 12px 15px;
+            border-radius: 6px 6px 0 0;
+            margin-bottom: 0;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>COM-B Barrier Assessment</h1>
+        <p class="subtitle">
+            Assess barriers preventing behaviour change across 6 categories
+        </p>
+        
+        <div class="help-text">
+            <strong>How to complete:</strong> For each barrier type, rate severity from 0-10.
+            Lower scores = fewer barriers, Higher scores = more severe barriers preventing behaviour change.
+        </div>
+        
+        <form action="/assessment/submit" method="POST">
+            <!-- Meta Information -->
+            <div class="form-section">
+                <div class="section-title">Assessment Details</div>
+                
+                <div class="form-group">
+                    <label for="participant_id">Participant</label>
+                    <select name="participant_id" id="participant_id" required>
+                        <option value="">Select Participant...</option>
+                        {% for participant in participants %}
+                        <option value="{{ participant.id }}">{{ participant.id }} - {{ participant.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="domain">Criminogenic Need Domain</label>
+                    <select name="domain" id="domain" required>
+                        <option value="">Select Domain...</option>
+                        {% for key, value in domains.items() %}
+                        <option value="{{ key }}">{{ value.replace('_', ' ').title() }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="timepoint">Timepoint</label>
+                    <select name="timepoint" id="timepoint" required>
+                        {% for key, value in timepoints.items() %}
+                        <option value="{{ key }}">{{ value.split(':')[1].replace('_', ' ').title() }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Barrier Questions -->
+            <div class="form-section">
+                <div class="section-title">Barrier Severity Ratings</div>
+                
+                {% for barrier_key, barrier_info in barrier_questions.items() %}
+                <div class="barrier-question">
+                    <div class="barrier-type-header">
+                        {{ barrier_key.replace('_', ' ').title() }}
+                    </div>
+                    <div style="padding: 20px; background: white;">
+                        <div class="question-text">{{ barrier_info.question }}</div>
+                        <div class="question-examples">
+                            <strong>Examples:</strong> {{ barrier_info.examples }}
+                        </div>
+                        <div class="question-scale">
+                            <strong>Scale:</strong> {{ barrier_info.scale }}
+                        </div>
+                        
+                        <div class="slider-container">
+                            <input type="range" 
+                                   name="barrier_{{ barrier_key }}" 
+                                   id="barrier_{{ barrier_key }}"
+                                   min="0" 
+                                   max="10" 
+                                   value="5" 
+                                   oninput="updateScore('{{ barrier_key }}', this.value)">
+                            <div class="score-display" id="score_{{ barrier_key }}">5</div>
+                            <div class="score-label" id="label_{{ barrier_key }}">Moderate Barrier</div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <button type="submit" class="btn-submit">
+                Submit Assessment
+            </button>
+        </form>
+    </div>
+    
+    <script>
+        function updateScore(barrierId, value) {
+            const scoreDisplay = document.getElementById(`score_${barrierId}`);
+            const labelDisplay = document.getElementById(`label_${barrierId}`);
+            
+            scoreDisplay.textContent = value;
+            
+            // Update label based on score
+            let label = '';
+            let color = '';
+            if (value <= 2) {
+                label = 'Minimal Barrier';
+                color = '#27ae60';
+            } else if (value <= 4) {
+                label = 'Mild Barrier';
+                color = '#2ecc71';
+            } else if (value <= 6) {
+                label = 'Moderate Barrier';
+                color = '#f39c12';
+            } else if (value <= 8) {
+                label = 'Significant Barrier';
+                color = '#e67e22';
+            } else {
+                label = 'Severe Barrier';
+                color = '#e74c3c';
+            }
+            
+            labelDisplay.textContent = label;
+            scoreDisplay.style.color = color;
+        }
+        
+        // Initialize all scores
+        document.addEventListener('DOMContentLoaded', function() {
+            {% for barrier_key in barrier_questions.keys() %}
+            updateScore('{{ barrier_key }}', 5);
+            {% endfor %}
+        });
+    </script>
+</body>
+</html>
